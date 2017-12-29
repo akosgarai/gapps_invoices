@@ -1,0 +1,442 @@
+<script type="text/javascript">
+angular.module('invoices', [])
+.controller('invoicesController', ['$scope', '$filter', function ($scope, $filter) {
+
+  $scope.init = function () {
+    $scope.app = 'providerlist';
+        $scope.invoiceProviders = [
+            {
+                'id' : 1,
+                'label': 'Provider 1',
+                'name': 'Provider 1 name',
+                'details' : {
+                    'address' : 'address of provider 1',
+                    'postal-address' : 'postal address of provider 1',
+                    'fax' : '003611236988',
+                    'web' : 'http://www.google.com',
+                    'cs-email' : 'customer-support@provider1.com',
+                    'phone' : '003611236987'
+                }
+            },
+            {
+                'id' : 2,
+                'label': 'Provider 2',
+                'name': 'Provider 2 name',
+                'details' : {
+                    'address' : 'address of provider 2',
+                    'postal-address' : 'postal address of provider 2',
+                    'fax' : '003611236989',
+                    'web' : 'http://www.google.com',
+                    'cs-email' : 'customer-support@provider2.com',
+                    'phone' : '003611236986'
+                }
+            },
+            {
+                'id' : 3,
+                'label': 'Provider 3',
+                'name': 'Provider 3 name',
+                'details' : {
+                    'address' : 'address of provider 3',
+                    'postal-address' : 'postal address of provider 3',
+                    'fax' : '003611236990',
+                    'web' : 'http://www.google.com',
+                    'cs-email' : 'customer-support@provider3.com',
+                    'phone' : '003611236985'
+                }
+            }
+        ];
+        $scope.services = [
+            {
+                'id' : 1,
+                'providerId' : 1,
+                'label': 'Service 1',
+                'name': 'Service 1 name',
+                'serviceId' : 'serviceid123'
+            },
+            {
+                'id' : 2,
+                'providerId' : 1,
+                'label': 'Service 2',
+                'name': 'Service 2 name',
+                'serviceId' : 'serviceid126'
+            },
+            {
+                'id' : 3,
+                'providerId' : 2,
+                'label': 'Service 3',
+                'name': 'Service 3 name',
+                'serviceId' : 'serviceid129'
+            },
+            {
+                'id' : 4,
+                'providerId' : 3,
+                'label': 'Service 4',
+                'name': 'Service 4 name',
+                'serviceId' : 'serviceid130'
+            }
+        ];
+        $scope.invoices = [
+            {
+                'id' : 1,
+                'providerId': 1,
+                'serviceId': 1,
+                'invoiceId' : 'testinvoiceid1',
+                'arriveDate' : new Date('2016-01-10'),
+                'validDate' : new Date('2016-01-20'),
+                'payedDate' : new Date('2016-01-19'),
+                'interval' : '',
+                'amount' : 6500
+            },
+            {
+                'id' : 2,
+                'providerId': 2,
+                'serviceId': 3,
+                'invoiceId' : 'testinvoiceid2',
+                'arriveDate' : new Date('2016-01-09'),
+                'validDate' : new Date('2016-01-22'),
+                'payedDate' : new Date('2016-01-21'),
+                'interval' : '',
+                'amount' : 7000
+            },
+            {
+                'id' : 3,
+                'providerId': 3,
+                'serviceId': 4,
+                'invoiceId' : 'testinvoiceid3',
+                'arriveDate' : new Date('2016-01-04'),
+                'validDate' : new Date('2016-01-17'),
+                'payedDate' : new Date('2016-01-11'),
+                'interval' : '',
+                'amount' : 7500
+            },
+            {
+                'id' : 4,
+                'providerId': 1,
+                'serviceId': 2,
+                'invoiceId' : 'testinvoiceid4',
+                'arriveDate' : new Date('2016-02-10'),
+                'validDate' : new Date('2016-02-20'),
+                'payedDate' : new Date('2016-02-19'),
+                'interval' : '',
+                'amount' : 6505
+            },
+            {
+                'id' : 5,
+                'providerId': 2,
+                'serviceId': 3,
+                'invoiceId' : 'testinvoiceid5',
+                'arriveDate' : new Date('2016-02-09'),
+                'validDate' : new Date('2016-02-22'),
+                'payedDate' : new Date('2016-02-21'),
+                'interval' : '',
+                'amount' : 7005
+            },
+            {
+                'id' : 6,
+                'providerId': 3,
+                'serviceId': 4,
+                'invoiceId' : 'testinvoiceid6',
+                'arriveDate' : new Date('2016-02-04'),
+                'validDate' : new Date('2016-02-17'),
+                'payedDate' : new Date('2016-02-11'),
+                'interval' : '',
+                'amount' : 7505
+            },
+            {
+                'id' : 7,
+                'providerId': 1,
+                'serviceId': 2,
+                'invoiceId' : 'testinvoiceid7',
+                'arriveDate' : new Date('2016-06-10'),
+                'validDate' : new Date('2016-06-20'),
+                'payedDate' : '',
+                'interval' : '',
+                'amount' : 6505
+            },
+            {
+                'id' : 8,
+                'providerId': 2,
+                'serviceId': 3,
+                'invoiceId' : 'testinvoiceid8',
+                'arriveDate' : new Date('2016-06-19'),
+                'validDate' : new Date('2016-07-05'),
+                'payedDate' : '',
+                'interval' : '',
+                'amount' : 7005
+            },
+            {
+                'id' : 9,
+                'providerId': 3,
+                'serviceId': 4,
+                'invoiceId' : 'testinvoiceid9',
+                'arriveDate' : new Date('2016-07-01'),
+                'validDate' : new Date('2016-07-17'),
+                'payedDate' : '',
+                'interval' : '',
+                'amount' : 7505
+            }
+        ];
+  };
+  $scope.getTodayString = function () {
+    var today = new Date();
+    return $scope.getDateString(today);
+  };
+  $scope.getInvoiceById = function (id) {
+    for (var e in $scope.invoices) {
+      if ($scope.invoices[e]['id'] == id) {
+        return $scope.invoices[e];
+      }
+    }
+    return {};
+  };
+  $scope.getServiceById = function (id) {
+    for (var e in $scope.services) {
+      if ($scope.services[e]['id'] == id) {
+        return $scope.services[e];
+      }
+    }
+    return {};
+  };
+  $scope.getInvoiceProviderById = function (id) {
+    for (var e in $scope.invoiceProviders) {
+      if ($scope.invoiceProviders[e]['id'] == id) {
+        return $scope.invoiceProviders[e];
+      }
+    }
+    return {};
+  };
+  $scope.getDateString = function (dateObject, type) {
+    if (dateObject == '') {
+      return '';
+    }
+    var year = dateObject.getFullYear();
+    var month = dateObject.getMonth() +1;
+    if (month < 10) {
+      month = '0'+month;
+    }
+    var day = dateObject.getDate();
+    if (day < 10) {
+      day = '0'+day;
+    }
+    if (typeof (type) == 'undefined' || type == 'row') {
+      return year+'-'+month+'-'+day;
+    } else if (type == 'dot') {
+      return year+'.'+month+'.'+day;
+    }
+  };
+}]).controller('appController', ['$scope', function ($scope) {
+  $scope.setApp = function (name) {
+    $scope.initFilterObject();
+    $scope.initInvoiceObject();
+    $scope.app = name;
+  };
+  $scope.filterObject = {
+    'servicelist' : '',
+    'providerlist' : ''
+  };
+  $scope.orderObject = {
+    'name' : 'arriveDate',
+    'reverse' : 'true',
+    'filter' : {
+      'datefilter' : '',
+      'providerfilter' : ''
+    }
+  };
+  $scope.setFilterObject = function (paramName, paramValue, appName) {
+    if (typeof (appName) != 'undefined') {
+      $scope.setApp(appName);
+    } else {
+      $scope.setApp(paramName);
+    }
+    $scope.filterObject[paramName] = paramValue;
+    //console.log(['setFilterObject', {'appName':appName,'paramName':paramName,'paramValue':paramValue,'filterObject':$scope.filterObject}]);
+  };
+  $scope.initFilterObject = function () {
+    $scope.filterObject = {
+      'servicelist' : '',
+      'providerlist' : ''
+    };
+  };
+  $scope.setFilterName = function (name, type) {
+    $scope.orderObject['filter'][type] = name;
+  };
+  $scope.setOrderObject = function (name) {
+    if (name == $scope.orderObject['name']) {
+      $scope.orderObject['reverse'] = !$scope.orderObject['reverse'];
+    } else {
+      $scope.orderObject['name'] = name;
+      $scope.orderObject['reverse'] = true;
+    }
+  };
+  $scope.showDangerLabel = function (date) {
+    var today = new Date();
+    if (date < today) {
+      return true;
+    }
+    return false;
+  };
+  $scope.setInvoiceObject = function (id) {
+    $scope.setApp('invoiceadd');
+    var invoice = $scope.getInvoiceById(id);
+    $scope.invoiceObject = {
+      'selectedProviderId': invoice['providerId'],
+      'selectedProvider': $scope.getInvoiceProviderById(invoice['providerId']),
+      'selectedServiceId': invoice['serviceId'],
+      'selectedService': $scope.getServiceById(invoice['serviceId']),
+      'id' : invoice['id'],
+      'arriveDate' : invoice['arriveDate'],
+      'validDate' : invoice['validDate'],
+      'payedDate' : invoice['payedDate'],
+      'invoiceId' : invoice['invoiceId'],
+      'amount' : invoice['amount']
+    };
+  };
+  $scope.initInvoiceObject = function () {
+    $scope.invoiceObject = {
+      'selectedProviderId': '',
+      'selectedProvider': '',
+      'selectedServiceId': '',
+      'selectedService': '',
+      'arriveDate' : new Date($scope.getTodayString()),
+      'validDate' : new Date($scope.getTodayString()),
+      'payedDate' : new Date($scope.getTodayString()),
+      'invoiceId' : '',
+      'amount' : ''
+    };
+  };
+  $scope.setSelectedServicer = function (serviceId) {
+    $scope.invoiceObject['selectedServiceId'] = serviceId;
+    $scope.invoiceObject['selectedService'] = $scope.getServiceById($scope.invoiceObject['selectedServiceId']);
+  };
+  $scope.setSelectedProvider = function (providerId) {
+    $scope.invoiceObject['selectedProviderId'] = providerId;
+    $scope.invoiceObject['selectedProvider'] = $scope.getInvoiceProviderById($scope.invoiceObject['selectedProviderId']);
+  };
+  $scope.updateSelectedProvider = function (p) {
+    if(!p) {
+      $scope.initInvoiceObject();
+    } else {
+      $scope.setSelectedProvider(p);
+    }
+  };
+  $scope.saveInvoice = function () {
+    //console.log($scope.invoiceObject);
+    /* handle date format - convert to string with the expected format
+    */
+    var adString = $scope.getDateString($scope.invoiceObject['arriveDate'], 'dot');
+    var vdString = $scope.getDateString($scope.invoiceObject['validDate'], 'dot');
+    var pdString = $scope.getDateString($scope.invoiceObject['payedDate'], 'dot');
+    var objectToSave = {
+      'selectedProviderId': $scope.invoiceObject['selectedProviderId'],
+      'selectedServiceId': $scope.invoiceObject['selectedServiceId'],
+      'arriveDateString' : adString,
+      'validDateString' : vdString,
+      'payedDateString' : pdString,
+      'invoiceId' : $scope.invoiceObject['invoiceId'],
+      'amount' : $scope.invoiceObject['amount']
+    };
+    if (typeof ($scope.invoiceObject['id']) != 'undefined') {
+      objectToSave['id'] = $scope.invoiceObject['id'];
+    }
+    google.script.run
+    .withSuccessHandler($scope.saveInvoiceSuccessHandler)
+    .withFailureHandler($scope.errorHandler)
+    .saveInvoice(objectToSave);
+  };
+  $scope.saveInvoiceSuccessHandler = function (response) {
+    console.log(response);
+    var newInvoice = {
+      'id' : response['id'],
+      'providerId': $scope.invoiceObject['selectedProviderId'],
+      'serviceId': $scope.invoiceObject['selectedServiceId'],
+      'invoiceId' : $scope.invoiceObject['invoiceId'],
+      'arriveDate' : $scope.invoiceObject['arriveDate'],
+      'validDate' : $scope.invoiceObject['validDate'],
+      'payedDate' : $scope.invoiceObject['payedDate'],
+      'interval' : '',
+      'amount' : $scope.invoiceObject['amount']
+    };
+    $scope.invoices.push(newInvoice);
+    $scope.initInvoiceObject();
+    $scope.setApp('invoicelist');
+    $scope.$apply();
+  };
+  $scope.errorHandler = function (response) {
+    console.log(response);
+  };
+}]).filter('idfilter', function () {
+  return function (items, id) {
+    if (!id || id == '') {
+      return items;
+    }
+    var matchedItems = [];
+    for (var i in items) {
+      if (parseInt(items[i]['id']) == id) {
+        matchedItems.push(items[i]);
+      }
+    }
+    return matchedItems;
+  };
+}).filter('serviceidfilter', function () {
+  return function (items, id) {
+    if (!id || id == '') {
+      return items;
+    }
+    var matchedItems = [];
+    for (var i in items) {
+      if (parseInt(items[i]['serviceId']) == id) {
+        matchedItems.push(items[i]);
+      }
+    }
+    return matchedItems;
+  };
+}).filter('provideridfilter', function () {
+  return function (items, id) {
+    if (!id || id == '') {
+      return items;
+    }
+    var matchedItems = [];
+    for (var i in items) {
+      if (parseInt(items[i]['providerId']) == id) {
+        matchedItems.push(items[i]);
+      }
+    }
+    return matchedItems;
+  };
+}).filter('nameFilter', function () {
+  return function (items, id) {
+    if (!id || id == '') {
+      return items;
+    }
+    var matchedItems = [];
+    for (var i in items) {
+      if (parseInt(items[i]['providerId']) == id) {
+        matchedItems.push(items[i]);
+      }
+    }
+    return matchedItems;
+  };
+}).filter('dateFilter', function () {
+  return function (items, filterType) {
+    var matchedItems = [];
+    if (filterType == 'unpayed') {
+      for (var i in items) {
+        if (items[i]['payedDate'] == '') {
+          matchedItems.push(items[i]);
+        }
+      }
+      return matchedItems;
+    }
+    if (filterType == 'payed') {
+      for (var i in items) {
+        if (items[i]['payedDate'] != '') {
+          matchedItems.push(items[i]);
+        }
+      }
+      return matchedItems;
+    }
+    return items;
+  };
+})
+;
+</script>

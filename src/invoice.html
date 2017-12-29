@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+<?!= HtmlService.createHtmlOutputFromFile('invoice.js').getContent(); ?>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+</head>
+<body data-ng-app="invoices" data-ng-controller="invoicesController" data-ng-init="init()">
+  <div class="container" data-ng-controller="appController" >
+    <ul class="nav nav-tabs">
+      <li role="presentation" data-ng-class="{'active': app == 'providerlist'}"><a data-ng-click="setApp('providerlist')">Provider list</a></li>
+      <li role="presentation" data-ng-class="{'active': app == 'servicelist'}"><a data-ng-click="setApp('servicelist')">Service list</a></li>
+      <li role="presentation" data-ng-class="{'active': app == 'invoicelist'}"><a data-ng-click="setApp('invoicelist')">Invoice list</a></li>
+      <li role="presentation" data-ng-class="{'active': app == 'invoiceadd'}"><a data-ng-click="setApp('invoiceadd')">Invoice add</a></li>
+    </ul>
+    <div class="row" data-ng-if="app == 'providerlist'">
+      <div style="padding-top: 20px;">
+        <div class="col-md-4 col-sm-6 col-xs-12" data-ng-repeat="p in invoiceProviders | idfilter:filterObject[app]">
+          <div class="panel panel-default">
+            <div class="panel-heading" data-ng-bind="p.label"></div>
+            <div class="panel-body">
+              <dl class="">
+                <dt>Name</dt>
+                <dd data-ng-bind="p.name"></dd>
+                <dt>Address</dt>
+                <dd data-ng-bind="p['details']['address']"></dd>
+                <dt>Postal Address</dt>
+                <dd data-ng-bind="p['details']['postal-address']"></dd>
+                <dt>Phone</dt>
+                <dd data-ng-bind="p['details']['phone']"></dd>
+                <dt>Fax</dt>
+                <dd data-ng-bind="p['details']['fax']"></dd>
+                <dt>Web</dt>
+                <dd>
+                  <a href="{{p['details']['web']}}" target="_blank" >{{p['details']['web']}}</a>
+                </dd>
+                <dt>Email</dt>
+                <dd>
+                  <a href="mailto:{{p['details']['cs-email']}}" target="_top" >{{p['details']['cs-email']}}</a>
+                </dd>
+              </dl>
+            </div>
+            <div class="panel-footer">
+              <input type="button" class="btn btn-default" data-ng-click="setFilterObject('servicelist', p.id); " value="Services"/>
+              <input type="button" class="btn btn-default" data-ng-click="setFilterObject('providerlist', p.id, 'invoicelist'); " value="Invoices"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" data-ng-if="app == 'servicelist'">
+      <div style="padding-top: 20px;">
+        <div class="col-md-4 col-sm-6 col-xs-12" data-ng-repeat="s in services | provideridfilter:filterObject[app]">
+          <div class="panel panel-default">
+            <div class="panel-heading" data-ng-bind="s.label"></div>
+            <div class="panel-body">
+              <dl class="">
+                <dt>Name</dt>
+                <dd data-ng-bind="s.name"></dd>
+              </dl>
+            </div>
+            <div class="panel-footer">
+              <input type="button" class="btn btn-default" data-ng-click="setFilterObject('providerlist', s.providerId); " value="Provider"/>
+              <input type="button" class="btn btn-default" data-ng-click="setFilterObject('servicelist', s.id, 'invoicelist'); " value="Invoices"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" data-ng-if="app == 'invoicelist'">
+      <div style="padding-top: 20px;">
+        <table class="table table-bordered table-hover">
+          <tr>
+            <th data-ng-click="setOrderObject('providerId')"
+              data-ng-class="{'active': orderObject['name'] == 'providerId'}">
+              Provider Name
+              <span class="glyphicon" data-ng-class="orderObject['reverse'] ? 'glyphicon-sort-by-alphabet-alt':'glyphicon-sort-by-alphabet'" data-ng-if="orderObject['name'] == 'providerId'"></span>
+            </th>
+            <th data-ng-click="setOrderObject('arriveDate')"
+              data-ng-class="{'active': orderObject['name'] == 'arriveDate'}">
+              Arrive Date
+              <span class="glyphicon" data-ng-class="orderObject['reverse'] ? 'glyphicon-sort-by-alphabet-alt':'glyphicon-sort-by-alphabet'" data-ng-if="orderObject['name'] == 'arriveDate'"></span>
+            </th>
+            <th data-ng-click="setOrderObject('validDate')"
+              data-ng-class="{'active': orderObject['name'] == 'validDate'}">
+              Valid Date
+              <span class="glyphicon" data-ng-class="orderObject['reverse'] ? 'glyphicon-sort-by-alphabet-alt':'glyphicon-sort-by-alphabet'" data-ng-if="orderObject['name'] == 'validDate'"></span>
+            </th>
+            <th data-ng-click="setOrderObject('payedDate')"
+              data-ng-class="{'active': orderObject['name'] == 'payedDate'}">
+              Payed Date
+              <span class="glyphicon" data-ng-class="orderObject['reverse'] ? 'glyphicon-sort-by-alphabet-alt':'glyphicon-sort-by-alphabet'" data-ng-if="orderObject['name'] == 'payedDate'"></span>
+            </th>
+            <th data-ng-click="setOrderObject('amount')"
+              data-ng-class="{'active': orderObject['name'] == 'amount'}">
+              Amount
+              <span class="glyphicon" data-ng-class="orderObject['reverse'] ? 'glyphicon-sort-by-alphabet-alt':'glyphicon-sort-by-alphabet'" data-ng-if="orderObject['name'] == 'amount'"></span>
+            </th>
+          </tr>
+          <tr data-ng-repeat="inv in invoices | provideridfilter:filterObject['providerlist'] | serviceidfilter:filterObject['servicelist'] | dateFilter:orderObject['filter']['datefilter'] | nameFilter:orderObject['filter']['providerfilter'] |orderBy:orderObject['name']:orderObject['reverse']" data-ng-class="{'success' : inv['payedDate'] != '', 'danger': (inv['payedDate'] == '' && showDangerLabel(inv['validDate']))}" data-ng-click="setInvoiceObject(inv['id'])">
+            <td>
+              <span>{{getInvoiceProviderById(inv['providerId'])['label']}}</span>
+            </td>
+            <td>{{getDateString(inv['arriveDate'])}}</td>
+            <td>{{getDateString(inv['validDate'])}}</td>
+            <td>{{getDateString(inv['payedDate'])}}</td>
+            <td data-ng-bind="inv['amount']"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="row" data-ng-if="app == 'invoiceadd'">
+      <div style="padding-top: 20px;">
+        <div data-ng-class="{'col-md-12 col-sm-12 col-xs-12' : invoiceObject['selectedProvider'] == '', 'col-md-6 col-sm-6 col-xs-12' : invoiceObject['selectedProvider'] != ''}">
+          <div class="col-sm-12 col-md-12 col-xs-12">
+            <div class="form-group">
+              <label for="providerselector">Provider:</label>
+              <select class="form-control" name="providerselector" id="providerselector" data-ng-model="selectedProviderId"
+                data-ng-options="i.id as i.label for i in invoiceProviders"
+                data-ng-change="updateSelectedProvider(selectedProviderId)">
+                <option value="">Choose</option>
+              </select>
+            </div>
+            <div class="form-group" data-ng-if="invoiceObject['selectedProvider'] != ''">
+              <label for="serviceselector">Service:</label>
+              <select class="form-control" name="serviceselector" id="serviceselector" data-ng-model="selectedServiceId"
+                data-ng-options="i.id as i.label for i in services | provideridfilter:invoiceObject['selectedProviderId']"
+                data-ng-change="setSelectedServicer(selectedServiceId)">
+                <option value="">Choose</option>
+              </select>
+            </div>
+          </div>
+          <div data-ng-if="invoiceObject['selectedService'] != ''">
+            <div class="col-sm-12 col-md-6 col-xs-12">
+              <div class="form-group">
+                <label for="arrivedate">Arrive</label>
+                <input type="date" name="arrivedate" data-ng-model="invoiceObject['arriveDate']" class="form-control" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-xs-12">
+              <div class="form-group">
+                <label for="validdate">Valid to</label>
+                <input type="date" name="validdate" data-ng-model="invoiceObject['validDate']" class="form-control" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-12 col-xs-12">
+              <div class="form-group">
+                <label for="invoiceid">Invoice id</label>
+                <input type="text" name="invoiceid" data-ng-model="invoiceObject['invoiceId']" class="form-control" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-xs-12">
+              <div class="form-group">
+                <label for="payeddate">Payed</label>
+                <input type="date" name="payeddate" data-ng-model="invoiceObject['payedDate']" class="form-control" />
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-xs-12">
+              <div class="form-group">
+                <label for="payeddate">Amount</label>
+                <div class="input-group">
+                  <input type="number" name="amount" data-ng-model="invoiceObject['amount']" class="form-control" placeholder="Amount" />
+                  <span class="input-group-addon">HUF</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-12 col-xs-12">
+              <input type="button" name="invoicesave" value="Save invoice" data-ng-click="saveInvoice()" />
+            </div>
+          </div>
+        </div>
+        <div data-ng-class="{'hidden' : invoiceObject['selectedProvider'] == '', 'col-md-6 col-sm-6 col-xs-12' : invoiceObject['selectedProvider'] != ''}">
+          <div class="col-md-12 col-sm-12 col-xs-12" >
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <span data-ng-bind="invoiceObject['selectedProvider']['label']"></span>
+              </div>
+              <div class="panel-body">
+                <dl class="">
+                  <dt>Name</dt>
+                  <dd data-ng-bind="invoiceObject['selectedProvider']['name']"></dd>
+                  <dt>Address</dt>
+                  <dd data-ng-bind="invoiceObject['selectedProvider']['details']['address']"></dd>
+                  <dt>Postal Address</dt>
+                  <dd data-ng-bind="invoiceObject['selectedProvider']['details']['postal-address']"></dd>
+                  <dt>Phone</dt>
+                  <dd data-ng-bind="invoiceObject['selectedProvider']['details']['phone']"></dd>
+                  <dt>Fax</dt>
+                  <dd data-ng-bind="invoiceObject['selectedProvider']['details']['fax']"></dd>
+                  <dt>Web</dt>
+                  <dd>
+                    <a href="{{invoiceObject['selectedProvider']['details']['web']}}" target="_blank" >{{invoiceObject['selectedProvider']['details']['web']}}</a>
+                  </dd>
+                  <dt>Email</dt>
+                  <dd>
+                    <a href="mailto:{{invoiceObject['selectedProvider']['details']['cs-email']}}" target="_top" >{{invoiceObject['selectedProvider']['details']['cs-email']}}</a>
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-12 col-sm-12 col-xs-12" data-ng-if="invoiceObject['selectedService'] != ''">
+            <div class="panel panel-primary">
+              <div class="panel-heading">
+                <span data-ng-bind="invoiceObject['selectedService']['label']"></span>
+              </div>
+              <div class="panel-body">
+                <span data-ng-bind="invoiceObject['selectedService']['name']"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+
