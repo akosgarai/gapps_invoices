@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.8/angular.min.js"></script>
+    <script type="text/javascript" src="https://code.angularjs.org/1.6.8/angular.min.js"></script>
     <script type="text/javascript" src="js/invoice.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
-<body data-ng-app="invoices" data-ng-controller="invoicesController" >
+<body data-ng-app="invoices" data-ng-controller="appController" >
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li role="presentation" data-ng-repeat="menuItem in app['menu-items']" data-ng-class="{'active': app['application'] == menuItem}">
+                <a data-ng-click="setAppApplication(menuItem)"><span data-ng-bind="menuItem"></span></a>
+            </li>
+        </ul>
+    </div>
 </body>
 </html>
 
