@@ -1,2 +1,6 @@
 gapps.config.json
 *.swp
+dev/clientapp/test/angular.min.js
+dev/clientapp/test/angular-mocks.js
+node_modules/
+scripts/
