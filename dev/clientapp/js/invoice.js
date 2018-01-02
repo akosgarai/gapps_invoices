@@ -53,6 +53,12 @@ angular.module('invoices', [])
             $scope.setAppProvider(provider);
         }
     };
+    $scope.isProviderFormValid = function () {
+        if ($scope.app.provider['name'] == '') {
+            return false;
+        }
+        return true;
+    };
 
     $scope.init = function () {
         if (typeof providers_dev != 'undefined') {

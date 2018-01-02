@@ -152,6 +152,22 @@ describe('Invoice controller Unit Tests', function () {
                 }
             }
         });
+        describe('$scope.isProviderFormValid()', function () {
+            var lTestData = [
+                {'data' : ['','','','','','','','',''], 'expected': false},
+                {'data' : ['1','','','','','','','',''], 'expected': false},
+                {'data' : ['2','','','','','','','',''], 'expected': false},
+                {'data' : ['3','','asd','','','','','',''], 'expected': true},
+                {'data' : ['','','asd','','','','','',''], 'expected': true},
+                {'data' : ['3','','','1','1','1','1','1','1'], 'expected': false}
+            ];
+            for (var i in lTestData) {
+                it('should validate the provider form', function () {
+                    $scope.setAppProvider($scope.initProviderElement(lTestData[i]['data']));
+                    expect($scope.isProviderFormValid()).toEqual(lTestData[i]['expected']);
+                });
+            }
+        });
     });
 
 });
