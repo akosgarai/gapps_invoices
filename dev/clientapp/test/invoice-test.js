@@ -123,8 +123,10 @@ describe('Invoice controller Unit Tests', function () {
                     it('should set the $scope.app[\'provider\'] variable', function () {
                         $scope.providers = testData[i]['expected'];
                         var provider = $scope.providers[p];
+                        var providerOrig = $scope.app.provider;
                         $scope.setAppProvider(provider);
                         expect($scope.app['provider']).toEqual(provider);
+                        expect($scope.app['providerOrig']).toEqual(providerOrig);
                     });
                 }
             }
@@ -141,9 +143,11 @@ describe('Invoice controller Unit Tests', function () {
                     it('should set the $scope.app[\'provider\'] variable', function () {
                         $scope.providers = testData[i]['expected'];
                         var provider = $scope.providers[p];
+                        var providerOrig = $scope.app.provider;
                         $scope.navigateEditMenu(provider);
                         expect($scope.app['application']).toEqual(expected);
                         expect($scope.app['provider']).toEqual(provider);
+                        expect($scope.app['providerOrig']).toEqual(providerOrig);
                     });
                 }
             }

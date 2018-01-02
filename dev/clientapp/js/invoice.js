@@ -5,13 +5,16 @@ angular.module('invoices', [])
     $scope.app = {
         'menu-items': ['provider-list', 'new-provider'],
         'provider' : null,
+        'providerOrig' : null,
         'application': ''
     };
     $scope.setAppApplication = function (name) {
         $scope.app['provider'] = null;
+        $scope.app['providerOrig'] = null;
         $scope.app['application'] = name;
     };
     $scope.setAppProvider = function (provider) {
+        $scope.app['providerOrig'] = $scope.app['provider'];
         $scope.app['provider'] = provider;
     };
 
