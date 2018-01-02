@@ -84,6 +84,7 @@ describe('Invoice controller Unit Tests', function () {
                     var expected = testData[i];
                     $scope.setAppApplication(expected);
                     expect($scope.app['application']).toEqual(expected);
+                    expect($scope.app['provider']).toEqual(null);
                 });
             }
         });

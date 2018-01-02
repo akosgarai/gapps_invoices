@@ -57,7 +57,30 @@
             </div>
         </div>
         <div class="row" data-ng-if="app['application'] == 'new-provider'">
-            <h2><span data-ng-bind="app.provider === null ? 'New provider' : 'Edit provider - ' + app.provider.label"></span></h2>
+            <h2><span data-ng-bind="(app.provider === null || app.provider['id'] === '') ? 'New provider' : 'Edit provider - ' + app.provider.label"></span></h2>
+            <div data-ng-if="app.provider === null">
+                <input type="button" value="New provider" data-ng-click="setAppProvider(initProviderElement(['','','','','','','','','']))" />
+            </div>
+            <div class="row" data-ng-if="app.provider !== null">
+                <div data-ng-repeat="(key, val) in app.provider">
+                    <div data-ng-if="['label', 'name'].indexOf(key) !== -1">
+                        <div class="input-group">
+                            <span class="input-group-addon" data-ng-bind="key"></span>
+                            <input type="text" class="form-control" placeholder="{{key}}" data-ng-value="val" data-ng-model="app.provider[key]">
+                        </div>
+                        <p data-ng-bind="val"></p>
+                    </div>
+                    <div data-ng-if="key === 'details'">
+                        <div data-ng-repeat="(detailKey, detailVal) in val">
+                            <div class="input-group">
+                                <span class="input-group-addon" data-ng-bind="detailKey"></span>
+                                <input type="text" class="form-control" placeholder="{{detailKey}}" data-ng-value="detailVal" data-ng-model="app.provider[key][detailKey]">
+                            </div>
+                        <p data-ng-bind="detailVal"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>

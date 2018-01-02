@@ -8,6 +8,7 @@ angular.module('invoices', [])
         'application': ''
     };
     $scope.setAppApplication = function (name) {
+        $scope.app['provider'] = null;
         $scope.app['application'] = name;
     };
     $scope.setAppProvider = function (provider) {
@@ -44,10 +45,10 @@ angular.module('invoices', [])
         console.log(response);
     };
     $scope.navigateEditMenu = function (provider) {
+        $scope.setAppApplication('new-provider');
         if (typeof provider !== 'undefined') {
             $scope.setAppProvider(provider);
         }
-        $scope.setAppApplication('new-provider');
     };
 
     $scope.init = function () {
