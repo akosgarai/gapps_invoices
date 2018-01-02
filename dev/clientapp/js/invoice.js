@@ -3,11 +3,15 @@ angular.module('invoices', [])
     $scope.providers = [];
 
     $scope.app = {
-        'menu-items': ['provider-list'],
+        'menu-items': ['provider-list', 'new-provider'],
+        'provider' : null,
         'application': ''
     };
     $scope.setAppApplication = function (name) {
         $scope.app['application'] = name;
+    };
+    $scope.setAppProvider = function (provider) {
+        $scope.app['provider'] = provider;
     };
 
     $scope.setProviders = function (providers) {
@@ -39,14 +43,21 @@ angular.module('invoices', [])
     $scope.errorHandler = function (response) {
         console.log(response);
     };
+    $scope.navigateEditMenu = function (provider) {
+        if (typeof provider !== 'undefined') {
+            $scope.setAppProvider(provider);
+        }
+        $scope.setAppApplication('new-provider');
+    };
 
     $scope.init = function () {
+        if (typeof providers_dev != 'undefined') {
+            $scope.setProviders(providers_dev);
+            return;
+        }
         google.script.run
         .withSuccessHandler($scope.getInvoiceProvidersSuccessHandler)
         .withFailureHandler($scope.errorHandler)
         .getInvoiceProviders();
     };
-}])
-.controller('invoicesController', ['$scope', function ($scope) {
-
 }]);

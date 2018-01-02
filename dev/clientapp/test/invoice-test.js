@@ -116,6 +116,37 @@ describe('Invoice controller Unit Tests', function () {
                 });
             }
         });
+        describe('$scope.setAppProvider()', function () {
+            for (var i in testData) {
+                for (var p in testData[i]['expected']) {
+                    it('should set the $scope.app[\'provider\'] variable', function () {
+                        $scope.providers = testData[i]['expected'];
+                        var provider = $scope.providers[p];
+                        $scope.setAppProvider(provider);
+                        expect($scope.app['provider']).toEqual(provider);
+                    });
+                }
+            }
+        });
+        describe('$scope.navigateEditMenu', function () {
+            var expected = 'new-provider';
+            it('should set the $scope.app[\'application\'] variable', function () {
+                $scope.navigateEditMenu();
+                expect($scope.app['application']).toEqual(expected);
+                expect($scope.app['provider']).toEqual(null);
+            });
+            for (var i in testData) {
+                for (var p in testData[i]['expected']) {
+                    it('should set the $scope.app[\'provider\'] variable', function () {
+                        $scope.providers = testData[i]['expected'];
+                        var provider = $scope.providers[p];
+                        $scope.navigateEditMenu(provider);
+                        expect($scope.app['application']).toEqual(expected);
+                        expect($scope.app['provider']).toEqual(provider);
+                    });
+                }
+            }
+        });
     });
 
 });
