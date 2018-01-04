@@ -1,11 +1,91 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.8/angular.min.js"></script>
+    <script type="text/javascript">
+    var providers_dev =  [
+        {'id': '1', 'label': 'provider2 label', 'name':'provider2 name', 'details': {'address': 'provider2 addr street 2', 'postal-address': 'provider2 addr street 2 pb:3', 'fax': '', 'web': 'www.google.com', 'cs-email': 'support@provider2.com', 'phone': '+3616767665'}},
+        {'id': '2', 'label': 'provider3 label', 'name':'provider3 name', 'details': {'address': 'provider3 addr street 3', 'postal-address': 'provider3 addr street 3 pb:4', 'fax': '', 'web': 'www.google.com', 'cs-email': 'support@provider3.com', 'phone': '+3616767665'}},
+        {'id': '3', 'label': 'provider3 label. its a long-long label. i think it might be enough long now', 'name':'provider3 name', 'details': {'address': 'provider3 addr street 3', 'postal-address': 'provider3 addr street 3 pb:4', 'fax': '', 'web': 'www.google.com', 'cs-email': 'support@provider3.com', 'phone': ''}}
+    ]
+    </script>
+    <script type="text/javascript" src="https://code.angularjs.org/1.6.8/angular.min.js"></script>
     <script type="text/javascript" src="js/invoice.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 </head>
-<body data-ng-app="invoices" data-ng-controller="invoicesController" >
+<body data-ng-app="invoices" data-ng-controller="appController" data-ng-init="init()">
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li role="presentation" data-ng-repeat="menuItem in app['menu-items']" data-ng-class="{'active': app['application'] == menuItem}">
+                <a data-ng-click="setAppApplication(menuItem)"><span data-ng-bind="menuItem"></span></a>
+            </li>
+        </ul>
+        <div class="row" data-ng-if="app['application'] == 'provider-list'">
+            <h2>List</h2>
+            <div class="col-md-4 col-sm-6 col-xs-12" data-ng-repeat="p in providers">
+                <div class="panel panel-default">
+                    <div class="panel-heading" data-ng-init="p['edit-request']=false">
+                        <button type="button" class="btn btn-default" aria-label="Right Align" data-ng-if="p['edit-request']" data-ng-click="navigateEditMenu(p)">
+                            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+                        </button>
+                        <a data-ng-click="p['edit-request']=!p['edit-request']"><span data-ng-bind="p.label"></span></a>
+                    </div>
+                    <div class="panel-body">
+                        <dl class="">
+                            <dt>Name</dt>
+                            <dd data-ng-bind="p.name"></dd>
+                            <dt>Address</dt>
+                            <dd data-ng-bind="p['details']['address']"></dd>
+                            <dt>Postal Address</dt>
+                            <dd data-ng-bind="p['details']['postal-address']"></dd>
+                            <dt>Phone</dt>
+                            <dd data-ng-bind="p['details']['phone']"></dd>
+                            <dt>Fax</dt>
+                            <dd data-ng-bind="p['details']['fax']"></dd>
+                            <dt>Web</dt>
+                            <dd>
+                            <a href="{{p['details']['web']}}" target="_blank" >{{p['details']['web']}}</a>
+                            </dd>
+                            <dt>Email</dt>
+                            <dd>
+                            <a href="mailto:{{p['details']['cs-email']}}" target="_top" >{{p['details']['cs-email']}}</a>
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="panel-footer">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" data-ng-if="app['application'] == 'new-provider'">
+            <h2><span data-ng-bind="(app.provider === null || app.provider['id'] === '') ? 'New provider' : 'Edit provider - ' + app.provider.label"></span></h2>
+            <div data-ng-if="app.provider === null">
+                <input type="button" value="New provider" data-ng-click="setAppProvider(initProviderElement(['','','','','','','','','']))" />
+            </div>
+            <div class="row" data-ng-if="app.provider !== null">
+                <div data-ng-repeat="(key, val) in app.provider">
+                    <div data-ng-if="['label', 'name'].indexOf(key) !== -1">
+                        <div class="input-group">
+                            <span class="input-group-addon" data-ng-bind="key"></span>
+                            <input type="text" class="form-control" placeholder="{{key}}" data-ng-value="val" data-ng-model="app.provider[key]">
+                        </div>
+                        <p data-ng-bind="val"></p>
+                    </div>
+                    <div data-ng-if="key === 'details'">
+                        <div data-ng-repeat="(detailKey, detailVal) in val">
+                            <div class="input-group">
+                                <span class="input-group-addon" data-ng-bind="detailKey"></span>
+                                <input type="text" class="form-control" placeholder="{{detailKey}}" data-ng-value="detailVal" data-ng-model="app.provider[key][detailKey]">
+                            </div>
+                        <p data-ng-bind="detailVal"></p>
+                        </div>
+                    </div>
+                </div>
+                <div data-ng-if="isProviderFormValid()">
+                    <input type="button" data-ng-value="app.provider['id'] ==='' ? 'save' : 'update #' + app.provider['id']" data-ng-click="providerUpdate()" />
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 
