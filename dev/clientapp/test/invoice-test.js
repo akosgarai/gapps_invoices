@@ -168,6 +168,40 @@ describe('Invoice controller Unit Tests', function () {
                 });
             }
         });
+        describe('$scope.providerUpdateSuccessHandler', function () {
+            var newProvider = {'id': 't_id', 'label': 't_label', 'name':'t_name', 'details': {'address': 't_address', 'postal-address': 't_postal-address', 'fax': 't_fax', 'web': 't_web', 'cs-email': 't_cs-email', 'phone': 't_phone'}};
+            var editedProvider = {'id': 't_id', 'label': 't_edit_label', 'name':'t_edit_name', 'details': {'address': 't_edit_address', 'postal-address': 't_edit_postal-address', 'fax': 't_edit_fax', 'web': 't_edit_web', 'cs-email': 't_edit_cs-email', 'phone': 't_edit_phone'}};
+            it('checking the length', function () {
+                $scope.setProviders([]);
+                $scope.providerUpdateSuccessHandler(newProvider);
+                expect($scope.providers.length).toEqual(1);
+            });
+            it('elements should be equal', function () {
+                $scope.setProviders([]);
+                $scope.providerUpdateSuccessHandler(newProvider);
+                expect($scope.providers[0]).toEqual(newProvider);
+            });
+            it('app.application should be provider-list', function () {
+                $scope.setProviders([]);
+                $scope.providerUpdateSuccessHandler(newProvider);
+                expect($scope.app['application']).toEqual('provider-list');
+            });
+            it('handles duplication', function () {
+                $scope.setProviders([]);
+                $scope.providerUpdateSuccessHandler(newProvider);
+                expect($scope.providers.length).toEqual(1);
+                $scope.providerUpdateSuccessHandler(newProvider);
+                expect($scope.providers.length).toEqual(1);
+            });
+            it('updates old value during edit', function () {
+                $scope.setProviders([]);
+                $scope.providerUpdateSuccessHandler(newProvider);
+                expect($scope.providers.length).toEqual(1);
+                $scope.providerUpdateSuccessHandler(editedProvider);
+                expect($scope.providers.length).toEqual(1);
+                expect($scope.providers[0]).toEqual(editedProvider);
+            });
+        });
     });
 
 });

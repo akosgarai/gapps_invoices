@@ -60,6 +60,33 @@ angular.module('invoices', [])
         return true;
     };
 
+    $scope.providerUpdate = function () {
+        if (typeof providers_dev != 'undefined') {
+            $scope.providerUpdateSuccessHandler($scope.app['provider']);
+            return;
+        }
+        google.script.run
+        .withSuccessHandler($scope.providerUpdateSuccessHandler)
+        .withFailureHandler($scope.errorHandler)
+        .providerHandler($scope.app['provider'], $scope.app['providerOrig']);
+    };
+
+    $scope.providerUpdateSuccessHandler = function (response) {
+        var id = response['id'];
+        var edit = false;
+        for (var i in $scope.providers) {
+            if ($scope.providers[i]['id'] === id) {
+                $scope.providers[i] = response;
+                edit = true;
+                break;
+            }
+        }
+        if (!edit) {
+            $scope.providers.push(response);
+        }
+        $scope.setAppApplication('provider-list');
+    };
+
     $scope.init = function () {
         if (typeof providers_dev != 'undefined') {
             $scope.setProviders(providers_dev);

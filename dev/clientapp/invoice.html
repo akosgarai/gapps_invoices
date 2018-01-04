@@ -81,7 +81,7 @@
                     </div>
                 </div>
                 <div data-ng-if="isProviderFormValid()">
-                    <p>Shown if form is valid.</p>
+                    <input type="button" data-ng-value="app.provider['id'] ==='' ? 'save' : 'update #' + app.provider['id']" data-ng-click="providerUpdate()" />
                 </div>
             </div>
         </div>
