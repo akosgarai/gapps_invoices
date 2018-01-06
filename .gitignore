@@ -2,5 +2,6 @@ gapps.config.json
 *.swp
 dev/clientapp/test/angular.min.js
 dev/clientapp/test/angular-mocks.js
+dev/clientapp/test/coverage/*
 node_modules/
 scripts/
