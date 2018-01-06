@@ -26,6 +26,57 @@ describe('Invoice controller Unit Tests', function () {
         it('should be defined', function() {
             expect(appController).toBeDefined();
         });
+        var generalProvider = {'id': 't_gen', 'label': 'general-provider', 'name':'general provider name', 'details': {'address': 't_address', 'postal-address': 't_postal-address', 'fax': 't_fax', 'web': 't_web', 'cs-email': 't_cs-email', 'phone': 't_phone'}};
+        var testDataService = [
+            {
+                'response': [],
+                'expected': []
+            },
+            {
+                'response': [
+                    ['t_id', 't_gen', 't_label', 't_name']
+                ],
+                'expected': [
+                    {'id': 't_id', 'label': 't_label', 'name':'t_name', 'providerId': 't_gen'}
+                ]
+            },
+            {
+                'response': [
+                    ['t_id', 't_gen', 't_label', 't_name'],
+                    ['1', 't_gen', 'service one', 'service one']
+                ],
+                'expected': [
+                    {'id': 't_id', 'label': 't_label', 'name':'t_name', 'providerId': 't_gen'},
+                    {'id': '1', 'label': 'service one', 'name':'service one', 'providerId': 't_gen'}
+                ]
+            },
+            {
+                'response': [
+                    ['t_id', 't_gen', 't_label', 't_name'],
+                    ['1', 't_gen', 'service one', 'service one'],
+                    ['2', 't_gen', 'service two', 'service two']
+                ],
+                'expected': [
+                    {'id': 't_id', 'label': 't_label', 'name':'t_name', 'providerId': 't_gen'},
+                    {'id': '1', 'label': 'service one', 'name':'service one', 'providerId': 't_gen'},
+                    {'id': '2', 'label': 'service two', 'name':'service two', 'providerId': 't_gen'}
+                ]
+            },
+            {
+                'response': [
+                    ['t_id', 't_gen', 't_label', 't_name'],
+                    ['1', 't_gen', 'service one', 'service one'],
+                    ['2', 't_gen', 'service two', 'service two'],
+                    ['3', 't_gen', 'service three', 'service three']
+                ],
+                'expected': [
+                    {'id': 't_id', 'label': 't_label', 'name':'t_name', 'providerId': 't_gen'},
+                    {'id': '1', 'label': 'service one', 'name':'service one', 'providerId': 't_gen'},
+                    {'id': '2', 'label': 'service two', 'name':'service two', 'providerId': 't_gen'},
+                    {'id': '3', 'label': 'service three', 'name':'service three', 'providerId': 't_gen'}
+                ]
+            }
+        ];
         var testDataProvider = [
             {
                 'response': [],
@@ -208,6 +259,17 @@ describe('Invoice controller Unit Tests', function () {
                 expect($scope.providers.length).toEqual(1);
                 expect($scope.providers[0]).toEqual(editedProvider);
             });
+        });
+        describe('$scope.initServiceElement()', function () {
+            for (var i in testDataService) {
+                var input = testDataService[i]['response'];
+                var expecteds = testDataService[i]['expected'];
+                for (var j in input) {
+                    it('should provide a previously defined object structure', function () {
+                        expect($scope.initServiceElement(input[j])).toEqual(expecteds[j]);
+                    });
+                }
+            }
         });
     });
 
