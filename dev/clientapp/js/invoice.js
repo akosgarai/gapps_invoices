@@ -62,10 +62,11 @@ angular.module('invoices', [])
         }
     };
     $scope.isProviderFormValid = function () {
-        if ($scope.app.provider['name'] == '') {
-            return false;
+        var isValid = true;
+        if ($scope.app.provider['name'] === '') {
+            isValid = false;
         }
-        return true;
+        return isValid;
     };
 
     $scope.providerUpdate = function () {

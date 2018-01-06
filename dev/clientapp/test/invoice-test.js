@@ -148,6 +148,15 @@ describe('Invoice controller Unit Tests', function () {
                 });
             }
         });
+        describe('$scope.errorHandler', function () {
+            it('should be defined', function () {
+                expect($scope.errorHandler).toBeDefined();
+            });
+            it('should do nothing', function () {
+                $scope.errorHandler("some text");
+                expect($scope.errorHandler).toBeDefined();
+            });
+        });
         describe('$scope.initProviderElement()', function () {
             for (var i in testDataProvider) {
                 var input = testDataProvider[i]['response'];
