@@ -21,6 +21,14 @@ angular.module('invoices', [])
     $scope.setProviders = function (providers) {
         $scope.providers = providers;
     };
+    $scope.initServiceElement = function (row) {
+        return {
+            'id' : row[0],
+            'providerId': row[1],
+            'label': row[2],
+            'name': row[3]
+        };
+    };
     $scope.initProviderElement = function (row) {
         return {
             'id' : row[0],
