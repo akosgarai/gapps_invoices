@@ -26,7 +26,7 @@ describe('Invoice controller Unit Tests', function () {
         it('should be defined', function() {
             expect(appController).toBeDefined();
         });
-        var testData = [
+        var testDataProvider = [
             {
                 'response': [],
                 'expected': []
@@ -78,10 +78,10 @@ describe('Invoice controller Unit Tests', function () {
         ];
 
         describe('$scope.setAppApplication', function () {
-            var testData = ['name-one', 'name-two', 'name-three'];
-            for (var i in testData) {
+            var testDataApplication = ['name-one', 'name-two', 'name-three'];
+            for (var i in testDataApplication) {
                 it('should set the $scope.app[\'application\'] variable', function () {
-                    var expected = testData[i];
+                    var expected = testDataApplication[i];
                     $scope.setAppApplication(expected);
                     expect($scope.app['application']).toEqual(expected);
                     expect($scope.app['provider']).toEqual(null);
@@ -89,9 +89,9 @@ describe('Invoice controller Unit Tests', function () {
             }
         });
         describe('$scope.initProviderElement()', function () {
-            for (var i in testData) {
-                var input = testData[i]['response'];
-                var expecteds = testData[i]['expected'];
+            for (var i in testDataProvider) {
+                var input = testDataProvider[i]['response'];
+                var expecteds = testDataProvider[i]['expected'];
                 for (var j in input) {
                     it('should provide a previously defined object structure', function () {
                         expect($scope.initProviderElement(input[j])).toEqual(expecteds[j]);
@@ -100,8 +100,8 @@ describe('Invoice controller Unit Tests', function () {
             }
         });
         describe('$scope.setProviders()', function () {
-            for (var i in testData) {
-                var expecteds = testData[i]['expected'];
+            for (var i in testDataProvider) {
+                var expecteds = testDataProvider[i]['expected'];
                 it('should set the $scope.providers variable properly', function () {
                     $scope.setProviders(expecteds);
                     expect($scope.providers).toEqual(expecteds);
@@ -109,19 +109,19 @@ describe('Invoice controller Unit Tests', function () {
             }
         });
         describe('$scope.getInvoiceProvidersSuccessHandler()', function () {
-            for (var i in testData) {
+            for (var i in testDataProvider) {
                 it('should set the $scope.providers variable properly', function () {
-                    var expected = testData[i]['expected'];
-                    $scope.getInvoiceProvidersSuccessHandler(testData[i]['response']);
+                    var expected = testDataProvider[i]['expected'];
+                    $scope.getInvoiceProvidersSuccessHandler(testDataProvider[i]['response']);
                     expect($scope.providers).toEqual(expected);
                 });
             }
         });
         describe('$scope.setAppProvider()', function () {
-            for (var i in testData) {
-                for (var p in testData[i]['expected']) {
+            for (var i in testDataProvider) {
+                for (var p in testDataProvider[i]['expected']) {
                     it('should set the $scope.app[\'provider\'] variable', function () {
-                        $scope.providers = testData[i]['expected'];
+                        $scope.providers = testDataProvider[i]['expected'];
                         var provider = $scope.providers[p];
                         var providerOrig = $scope.app.provider;
                         $scope.setAppProvider(provider);
@@ -138,10 +138,10 @@ describe('Invoice controller Unit Tests', function () {
                 expect($scope.app['application']).toEqual(expected);
                 expect($scope.app['provider']).toEqual(null);
             });
-            for (var i in testData) {
-                for (var p in testData[i]['expected']) {
+            for (var i in testDataProvider) {
+                for (var p in testDataProvider[i]['expected']) {
                     it('should set the $scope.app[\'provider\'] variable', function () {
-                        $scope.providers = testData[i]['expected'];
+                        $scope.providers = testDataProvider[i]['expected'];
                         var provider = $scope.providers[p];
                         var providerOrig = $scope.app.provider;
                         $scope.navigateEditMenu(provider);
