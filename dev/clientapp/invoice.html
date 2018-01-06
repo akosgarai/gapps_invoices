@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- %DEV_START% -->
     <script type="text/javascript">
     var providers_dev =  [
         {'id': '1', 'label': 'provider2 label', 'name':'provider2 name', 'details': {'address': 'provider2 addr street 2', 'postal-address': 'provider2 addr street 2 pb:3', 'fax': '', 'web': 'www.google.com', 'cs-email': 'support@provider2.com', 'phone': '+3616767665'}},
         {'id': '2', 'label': 'provider3 label', 'name':'provider3 name', 'details': {'address': 'provider3 addr street 3', 'postal-address': 'provider3 addr street 3 pb:4', 'fax': '', 'web': 'www.google.com', 'cs-email': 'support@provider3.com', 'phone': '+3616767665'}},
         {'id': '3', 'label': 'provider3 label. its a long-long label. i think it might be enough long now', 'name':'provider3 name', 'details': {'address': 'provider3 addr street 3', 'postal-address': 'provider3 addr street 3 pb:4', 'fax': '', 'web': 'www.google.com', 'cs-email': 'support@provider3.com', 'phone': ''}}
-    ]
+    ];
+    var services_dev =  [
+        {'id': '0', 'label': 't_label', 'name':'t_name', 'providerId': '1'},
+        {'id': '1', 'label': 'service one', 'name':'service one', 'providerId': '2'},
+        {'id': '2', 'label': 'service two', 'name':'service two', 'providerId': '2'},
+        {'id': '3', 'label': 'service three', 'name':'service three', 'providerId': '3'}
+    ];
     </script>
+    <!-- %DEV_END% -->
     <script type="text/javascript" src="https://code.angularjs.org/1.6.8/angular.min.js"></script>
     <script type="text/javascript" src="js/invoice.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">

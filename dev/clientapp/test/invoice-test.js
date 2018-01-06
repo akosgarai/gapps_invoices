@@ -26,7 +26,58 @@ describe('Invoice controller Unit Tests', function () {
         it('should be defined', function() {
             expect(appController).toBeDefined();
         });
-        var testData = [
+        var generalProvider = {'id': 't_gen', 'label': 'general-provider', 'name':'general provider name', 'details': {'address': 't_address', 'postal-address': 't_postal-address', 'fax': 't_fax', 'web': 't_web', 'cs-email': 't_cs-email', 'phone': 't_phone'}};
+        var testDataService = [
+            {
+                'response': [],
+                'expected': []
+            },
+            {
+                'response': [
+                    ['t_id', 't_gen', 't_label', 't_name']
+                ],
+                'expected': [
+                    {'id': 't_id', 'label': 't_label', 'name':'t_name', 'providerId': 't_gen'}
+                ]
+            },
+            {
+                'response': [
+                    ['t_id', 't_gen', 't_label', 't_name'],
+                    ['1', 't_gen', 'service one', 'service one']
+                ],
+                'expected': [
+                    {'id': 't_id', 'label': 't_label', 'name':'t_name', 'providerId': 't_gen'},
+                    {'id': '1', 'label': 'service one', 'name':'service one', 'providerId': 't_gen'}
+                ]
+            },
+            {
+                'response': [
+                    ['t_id', 't_gen', 't_label', 't_name'],
+                    ['1', 't_gen', 'service one', 'service one'],
+                    ['2', 't_gen', 'service two', 'service two']
+                ],
+                'expected': [
+                    {'id': 't_id', 'label': 't_label', 'name':'t_name', 'providerId': 't_gen'},
+                    {'id': '1', 'label': 'service one', 'name':'service one', 'providerId': 't_gen'},
+                    {'id': '2', 'label': 'service two', 'name':'service two', 'providerId': 't_gen'}
+                ]
+            },
+            {
+                'response': [
+                    ['t_id', 't_gen', 't_label', 't_name'],
+                    ['1', 't_gen', 'service one', 'service one'],
+                    ['2', 't_gen', 'service two', 'service two'],
+                    ['3', 't_gen', 'service three', 'service three']
+                ],
+                'expected': [
+                    {'id': 't_id', 'label': 't_label', 'name':'t_name', 'providerId': 't_gen'},
+                    {'id': '1', 'label': 'service one', 'name':'service one', 'providerId': 't_gen'},
+                    {'id': '2', 'label': 'service two', 'name':'service two', 'providerId': 't_gen'},
+                    {'id': '3', 'label': 'service three', 'name':'service three', 'providerId': 't_gen'}
+                ]
+            }
+        ];
+        var testDataProvider = [
             {
                 'response': [],
                 'expected': []
@@ -78,20 +129,42 @@ describe('Invoice controller Unit Tests', function () {
         ];
 
         describe('$scope.setAppApplication', function () {
-            var testData = ['name-one', 'name-two', 'name-three'];
-            for (var i in testData) {
-                it('should set the $scope.app[\'application\'] variable', function () {
-                    var expected = testData[i];
+            var testDataApplication = ['name-one', 'name-two', 'name-three'];
+            for (var i in testDataApplication) {
+                var expected = testDataApplication[i];
+                beforeEach(function () {
                     $scope.setAppApplication(expected);
+                });
+                it('$scope.app should be defined properly', function () {
+                    expect($scope.app).toBeDefined();
+                    expect($scope.app['application']).toBeDefined();
+                    expect($scope.app['provider']).toBeDefined();
+                    expect($scope.app['providerOrig']).toBeDefined();
+                    expect($scope.app['service']).toBeDefined();
+                    expect($scope.app['serviceOrig']).toBeDefined();
+                });
+                it('$scope.app values should be set properly', function () {
                     expect($scope.app['application']).toEqual(expected);
                     expect($scope.app['provider']).toEqual(null);
+                    expect($scope.app['providerOrig']).toEqual(null);
+                    expect($scope.app['service']).toEqual(null);
+                    expect($scope.app['serviceOrig']).toEqual(null);
                 });
             }
         });
+        describe('$scope.errorHandler', function () {
+            it('should be defined', function () {
+                expect($scope.errorHandler).toBeDefined();
+            });
+            it('should do nothing', function () {
+                $scope.errorHandler("some text");
+                expect($scope.errorHandler).toBeDefined();
+            });
+        });
         describe('$scope.initProviderElement()', function () {
-            for (var i in testData) {
-                var input = testData[i]['response'];
-                var expecteds = testData[i]['expected'];
+            for (var i in testDataProvider) {
+                var input = testDataProvider[i]['response'];
+                var expecteds = testDataProvider[i]['expected'];
                 for (var j in input) {
                     it('should provide a previously defined object structure', function () {
                         expect($scope.initProviderElement(input[j])).toEqual(expecteds[j]);
@@ -100,8 +173,8 @@ describe('Invoice controller Unit Tests', function () {
             }
         });
         describe('$scope.setProviders()', function () {
-            for (var i in testData) {
-                var expecteds = testData[i]['expected'];
+            for (var i in testDataProvider) {
+                var expecteds = testDataProvider[i]['expected'];
                 it('should set the $scope.providers variable properly', function () {
                     $scope.setProviders(expecteds);
                     expect($scope.providers).toEqual(expecteds);
@@ -109,23 +182,28 @@ describe('Invoice controller Unit Tests', function () {
             }
         });
         describe('$scope.getInvoiceProvidersSuccessHandler()', function () {
-            for (var i in testData) {
+            for (var i in testDataProvider) {
+                var expected = testDataProvider[i]['expected'];
                 it('should set the $scope.providers variable properly', function () {
-                    var expected = testData[i]['expected'];
-                    $scope.getInvoiceProvidersSuccessHandler(testData[i]['response']);
+                    $scope.getInvoiceProvidersSuccessHandler(testDataProvider[i]['response']);
                     expect($scope.providers).toEqual(expected);
                 });
             }
         });
         describe('$scope.setAppProvider()', function () {
-            for (var i in testData) {
-                for (var p in testData[i]['expected']) {
+            for (var i in testDataProvider) {
+                beforeEach(function () {
+                    $scope.setProviders(testDataProvider[i]['expected']);
+                });
+                for (var p in testDataProvider[i]['expected']) {
                     it('should set the $scope.app[\'provider\'] variable', function () {
-                        $scope.providers = testData[i]['expected'];
                         var provider = $scope.providers[p];
-                        var providerOrig = $scope.app.provider;
                         $scope.setAppProvider(provider);
                         expect($scope.app['provider']).toEqual(provider);
+                    });
+                    it('should set the $scope.app[\'providerOrig\'] variable', function () {
+                        var providerOrig = $scope.app['providerOrig'];
+                        $scope.setAppProvider($scope.providers[p]);
                         expect($scope.app['providerOrig']).toEqual(providerOrig);
                     });
                 }
@@ -133,15 +211,16 @@ describe('Invoice controller Unit Tests', function () {
         });
         describe('$scope.navigateEditMenu', function () {
             var expected = 'new-provider';
-            it('should set the $scope.app[\'application\'] variable', function () {
+            it('should set the $scope.app variable properly', function () {
                 $scope.navigateEditMenu();
                 expect($scope.app['application']).toEqual(expected);
                 expect($scope.app['provider']).toEqual(null);
+                expect($scope.app['providerOrig']).toEqual(null);
             });
-            for (var i in testData) {
-                for (var p in testData[i]['expected']) {
+            for (var i in testDataProvider) {
+                for (var p in testDataProvider[i]['expected']) {
                     it('should set the $scope.app[\'provider\'] variable', function () {
-                        $scope.providers = testData[i]['expected'];
+                        $scope.setProviders(testDataProvider[i]['expected']);
                         var provider = $scope.providers[p];
                         var providerOrig = $scope.app.provider;
                         $scope.navigateEditMenu(provider);
@@ -171,35 +250,165 @@ describe('Invoice controller Unit Tests', function () {
         describe('$scope.providerUpdateSuccessHandler', function () {
             var newProvider = {'id': 't_id', 'label': 't_label', 'name':'t_name', 'details': {'address': 't_address', 'postal-address': 't_postal-address', 'fax': 't_fax', 'web': 't_web', 'cs-email': 't_cs-email', 'phone': 't_phone'}};
             var editedProvider = {'id': 't_id', 'label': 't_edit_label', 'name':'t_edit_name', 'details': {'address': 't_edit_address', 'postal-address': 't_edit_postal-address', 'fax': 't_edit_fax', 'web': 't_edit_web', 'cs-email': 't_edit_cs-email', 'phone': 't_edit_phone'}};
-            it('checking the length', function () {
+            beforeEach(function () {
                 $scope.setProviders([]);
                 $scope.providerUpdateSuccessHandler(newProvider);
+            });
+            it('checking the length', function () {
                 expect($scope.providers.length).toEqual(1);
             });
             it('elements should be equal', function () {
-                $scope.setProviders([]);
-                $scope.providerUpdateSuccessHandler(newProvider);
                 expect($scope.providers[0]).toEqual(newProvider);
             });
             it('app.application should be provider-list', function () {
-                $scope.setProviders([]);
-                $scope.providerUpdateSuccessHandler(newProvider);
                 expect($scope.app['application']).toEqual('provider-list');
             });
             it('handles duplication', function () {
-                $scope.setProviders([]);
-                $scope.providerUpdateSuccessHandler(newProvider);
-                expect($scope.providers.length).toEqual(1);
                 $scope.providerUpdateSuccessHandler(newProvider);
                 expect($scope.providers.length).toEqual(1);
             });
             it('updates old value during edit', function () {
-                $scope.setProviders([]);
-                $scope.providerUpdateSuccessHandler(newProvider);
-                expect($scope.providers.length).toEqual(1);
                 $scope.providerUpdateSuccessHandler(editedProvider);
                 expect($scope.providers.length).toEqual(1);
                 expect($scope.providers[0]).toEqual(editedProvider);
+            });
+        });
+        describe('$scope.providerUpdate', function () {
+            var newProvider = {'id': 't_id', 'label': 't_label', 'name':'t_name', 'details': {'address': 't_address', 'postal-address': 't_postal-address', 'fax': 't_fax', 'web': 't_web', 'cs-email': 't_cs-email', 'phone': 't_phone'}};
+            var editedProvider = {'id': 't_id', 'label': 't_edit_label', 'name':'t_edit_name', 'details': {'address': 't_edit_address', 'postal-address': 't_edit_postal-address', 'fax': 't_edit_fax', 'web': 't_edit_web', 'cs-email': 't_edit_cs-email', 'phone': 't_edit_phone'}};
+            beforeEach(function () {
+                $scope.setProviders([]);
+                $scope.setAppProvider(newProvider);
+                $scope.providerUpdate();
+            });
+            it('checking the length', function () {
+                expect($scope.providers.length).toEqual(1);
+            });
+            it('elements should be equal', function () {
+                expect($scope.providers[0]).toEqual(newProvider);
+            });
+            it('app.application should be provider-list', function () {
+                expect($scope.app['application']).toEqual('provider-list');
+            });
+            it('handles duplication', function () {
+                $scope.setAppProvider(newProvider);
+                $scope.providerUpdate();
+                expect($scope.providers.length).toEqual(1);
+            });
+            it('updates old value during edit', function () {
+                $scope.setAppProvider(editedProvider);
+                $scope.providerUpdate();
+                expect($scope.providers.length).toEqual(1);
+                expect($scope.providers[0]).toEqual(editedProvider);
+            });
+        });
+        describe('$scope.init', function () {
+            it('Check stuff after init', function () {
+                $scope.init();
+                expect($scope.providers).toBeDefined();
+            });
+        });
+        describe('$scope.initServiceElement()', function () {
+            for (var i in testDataService) {
+                var input = testDataService[i]['response'];
+                var expecteds = testDataService[i]['expected'];
+                for (var j in input) {
+                    it('should provide a previously defined object structure', function () {
+                        expect($scope.initServiceElement(input[j])).toEqual(expecteds[j]);
+                    });
+                }
+            }
+        });
+        describe('$scope.setServices()', function () {
+            for (var i in testDataService) {
+                var expecteds = testDataService[i]['expected'];
+                it('should set the $scope.services variable properly', function () {
+                    $scope.setServices(expecteds);
+                    expect($scope.services).toEqual(expecteds);
+                });
+            }
+        });
+        describe('$scope.getServicesSuccessHandler()', function () {
+            for (var i in testDataService) {
+                var expected = testDataService[i]['expected'];
+                it('should set the $scope.providers variable properly', function () {
+                    $scope.getServicesSuccessHandler(testDataService[i]['response']);
+                    expect($scope.services).toEqual(expected);
+                });
+            }
+        });
+        describe('$scope.setAppService()', function () {
+            for (var i in testDataService) {
+                beforeEach(function () {
+                    $scope.setServices(testDataService[i]['expected']);
+                });
+                for (var p in testDataService[i]['expected']) {
+                    it('should set the $scope.app[\'service\'] variable', function () {
+                        var service = $scope.services[p];
+                        $scope.setAppService(service);
+                        expect($scope.app['service']).toEqual(service);
+                    });
+                    it('should set the $scope.app[\'serviceOrig\'] variable', function () {
+                        var serviceOrig = $scope.app['serviceOrig'];
+                        $scope.setAppService($scope.services[p]);
+                        expect($scope.app['serviceOrig']).toEqual(serviceOrig);
+                    });
+                }
+            }
+        });
+        describe('$scope.serviceUpdateSuccessHandler', function () {
+            var newService = {'id': 't_id', 'label': 't_label', 'name':'t_name', 'providerId': 't_gen'};
+            var editedService = {'id': 't_id', 'label': 't_new_label', 'name':'t_new_name', 'providerId': 't_gen'};
+            beforeEach(function () {
+                $scope.setServices([]);
+                $scope.serviceUpdateSuccessHandler(newService);
+            });
+            it('checking the length', function () {
+                expect($scope.services.length).toEqual(1);
+            });
+            it('elements should be equal', function () {
+                expect($scope.services[0]).toEqual(newService);
+            });
+            it('app.application should be service-list', function () {
+                expect($scope.app['application']).toEqual('service-list');
+            });
+            it('handles duplication', function () {
+                $scope.serviceUpdateSuccessHandler(newService);
+                expect($scope.services.length).toEqual(1);
+            });
+            it('updates old value during edit', function () {
+                $scope.serviceUpdateSuccessHandler(editedService);
+                expect($scope.services.length).toEqual(1);
+                expect($scope.services[0]).toEqual(editedService);
+            });
+        });
+        describe('$scope.serviceUpdate', function () {
+            var newService = {'id': 't_id', 'label': 't_label', 'name':'t_name', 'providerId': 't_gen'};
+            var editedService = {'id': 't_id', 'label': 't_new_label', 'name':'t_new_name', 'providerId': 't_gen'};
+            beforeEach(function () {
+                $scope.setServices([]);
+                $scope.setAppService(newService);
+                $scope.serviceUpdate();
+            });
+            it('checking the length', function () {
+                expect($scope.services.length).toEqual(1);
+            });
+            it('elements should be equal', function () {
+                expect($scope.services[0]).toEqual(newService);
+            });
+            it('app.application should be provider-list', function () {
+                expect($scope.app['application']).toEqual('service-list');
+            });
+            it('handles duplication', function () {
+                $scope.setAppService(newService);
+                $scope.serviceUpdate();
+                expect($scope.services.length).toEqual(1);
+            });
+            it('updates old value during edit', function () {
+                $scope.setAppService(editedService);
+                $scope.serviceUpdate();
+                expect($scope.services.length).toEqual(1);
+                expect($scope.services[0]).toEqual(editedService);
             });
         });
     });
