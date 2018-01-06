@@ -4,19 +4,27 @@ angular.module('invoices', [])
     $scope.services = [];
 
     $scope.app = {
-        'menu-items': ['provider-list', 'new-provider'],
+        'menu-items': ['provider-list', 'new-provider', 'service-list', 'new-service'],
         'provider' : null,
         'providerOrig' : null,
+        'service' : null,
+        'serviceOrig' : null,
         'application': ''
     };
     $scope.setAppApplication = function (name) {
         $scope.app['provider'] = null;
         $scope.app['providerOrig'] = null;
+        $scope.app['service'] = null;
+        $scope.app['serviceOrig'] = null;
         $scope.app['application'] = name;
     };
     $scope.setAppProvider = function (provider) {
         $scope.app['providerOrig'] = $scope.app['provider'];
         $scope.app['provider'] = provider;
+    };
+    $scope.setAppService = function (service) {
+        $scope.app['serviceOrig'] = $scope.app['service'];
+        $scope.app['service'] = service;
     };
 
     $scope.setProviders = function (providers) {
@@ -83,6 +91,32 @@ angular.module('invoices', [])
         .withSuccessHandler($scope.providerUpdateSuccessHandler)
         .withFailureHandler($scope.errorHandler)
         .providerHandler($scope.app['provider'], $scope.app['providerOrig']);
+    }
+    $scope.serviceUpdate = function () {
+        if (typeof services_dev != 'undefined') {
+            $scope.serviceUpdateSuccessHandler($scope.app['service']);
+            return;
+        }
+        google.script.run
+        .withSuccessHandler($scope.serviceUpdateSuccessHandler)
+        .withFailureHandler($scope.errorHandler)
+        .serviceHandler($scope.app['service'], $scope.app['serviceOrig']);
+    };
+
+    $scope.serviceUpdateSuccessHandler = function (response) {
+        var id = response['id'];
+        var edit = false;
+        for (var i in $scope.services) {
+            if ($scope.services[i]['id'] === id) {
+                $scope.services[i] = response;
+                edit = true;
+                break;
+            }
+        }
+        if (!edit) {
+            $scope.services.push(response);
+        }
+        $scope.setAppApplication('service-list');
     };
 
     $scope.providerUpdateSuccessHandler = function (response) {

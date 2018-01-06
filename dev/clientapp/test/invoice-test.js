@@ -140,11 +140,15 @@ describe('Invoice controller Unit Tests', function () {
                     expect($scope.app['application']).toBeDefined();
                     expect($scope.app['provider']).toBeDefined();
                     expect($scope.app['providerOrig']).toBeDefined();
+                    expect($scope.app['service']).toBeDefined();
+                    expect($scope.app['serviceOrig']).toBeDefined();
                 });
                 it('$scope.app values should be set properly', function () {
                     expect($scope.app['application']).toEqual(expected);
                     expect($scope.app['provider']).toEqual(null);
                     expect($scope.app['providerOrig']).toEqual(null);
+                    expect($scope.app['service']).toEqual(null);
+                    expect($scope.app['serviceOrig']).toEqual(null);
                 });
             }
         });
@@ -332,6 +336,80 @@ describe('Invoice controller Unit Tests', function () {
                     expect($scope.services).toEqual(expected);
                 });
             }
+        });
+        describe('$scope.setAppService()', function () {
+            for (var i in testDataService) {
+                beforeEach(function () {
+                    $scope.setServices(testDataService[i]['expected']);
+                });
+                for (var p in testDataService[i]['expected']) {
+                    it('should set the $scope.app[\'service\'] variable', function () {
+                        var service = $scope.services[p];
+                        $scope.setAppService(service);
+                        expect($scope.app['service']).toEqual(service);
+                    });
+                    it('should set the $scope.app[\'serviceOrig\'] variable', function () {
+                        var serviceOrig = $scope.app['serviceOrig'];
+                        $scope.setAppService($scope.services[p]);
+                        expect($scope.app['serviceOrig']).toEqual(serviceOrig);
+                    });
+                }
+            }
+        });
+        describe('$scope.serviceUpdateSuccessHandler', function () {
+            var newService = {'id': 't_id', 'label': 't_label', 'name':'t_name', 'providerId': 't_gen'};
+            var editedService = {'id': 't_id', 'label': 't_new_label', 'name':'t_new_name', 'providerId': 't_gen'};
+            beforeEach(function () {
+                $scope.setServices([]);
+                $scope.serviceUpdateSuccessHandler(newService);
+            });
+            it('checking the length', function () {
+                expect($scope.services.length).toEqual(1);
+            });
+            it('elements should be equal', function () {
+                expect($scope.services[0]).toEqual(newService);
+            });
+            it('app.application should be service-list', function () {
+                expect($scope.app['application']).toEqual('service-list');
+            });
+            it('handles duplication', function () {
+                $scope.serviceUpdateSuccessHandler(newService);
+                expect($scope.services.length).toEqual(1);
+            });
+            it('updates old value during edit', function () {
+                $scope.serviceUpdateSuccessHandler(editedService);
+                expect($scope.services.length).toEqual(1);
+                expect($scope.services[0]).toEqual(editedService);
+            });
+        });
+        describe('$scope.serviceUpdate', function () {
+            var newService = {'id': 't_id', 'label': 't_label', 'name':'t_name', 'providerId': 't_gen'};
+            var editedService = {'id': 't_id', 'label': 't_new_label', 'name':'t_new_name', 'providerId': 't_gen'};
+            beforeEach(function () {
+                $scope.setServices([]);
+                $scope.setAppService(newService);
+                $scope.serviceUpdate();
+            });
+            it('checking the length', function () {
+                expect($scope.services.length).toEqual(1);
+            });
+            it('elements should be equal', function () {
+                expect($scope.services[0]).toEqual(newService);
+            });
+            it('app.application should be provider-list', function () {
+                expect($scope.app['application']).toEqual('service-list');
+            });
+            it('handles duplication', function () {
+                $scope.setAppService(newService);
+                $scope.serviceUpdate();
+                expect($scope.services.length).toEqual(1);
+            });
+            it('updates old value during edit', function () {
+                $scope.setAppService(editedService);
+                $scope.serviceUpdate();
+                expect($scope.services.length).toEqual(1);
+                expect($scope.services[0]).toEqual(editedService);
+            });
         });
     });
 
