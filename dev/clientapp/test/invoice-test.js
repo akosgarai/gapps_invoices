@@ -80,11 +80,20 @@ describe('Invoice controller Unit Tests', function () {
         describe('$scope.setAppApplication', function () {
             var testDataApplication = ['name-one', 'name-two', 'name-three'];
             for (var i in testDataApplication) {
-                it('should set the $scope.app[\'application\'] variable', function () {
-                    var expected = testDataApplication[i];
+                var expected = testDataApplication[i];
+                beforeEach(function () {
                     $scope.setAppApplication(expected);
+                });
+                it('$scope.app should be defined properly', function () {
+                    expect($scope.app).toBeDefined();
+                    expect($scope.app['application']).toBeDefined();
+                    expect($scope.app['provider']).toBeDefined();
+                    expect($scope.app['providerOrig']).toBeDefined();
+                });
+                it('$scope.app values should be set properly', function () {
                     expect($scope.app['application']).toEqual(expected);
                     expect($scope.app['provider']).toEqual(null);
+                    expect($scope.app['providerOrig']).toEqual(null);
                 });
             }
         });
@@ -110,8 +119,8 @@ describe('Invoice controller Unit Tests', function () {
         });
         describe('$scope.getInvoiceProvidersSuccessHandler()', function () {
             for (var i in testDataProvider) {
+                var expected = testDataProvider[i]['expected'];
                 it('should set the $scope.providers variable properly', function () {
-                    var expected = testDataProvider[i]['expected'];
                     $scope.getInvoiceProvidersSuccessHandler(testDataProvider[i]['response']);
                     expect($scope.providers).toEqual(expected);
                 });
@@ -119,13 +128,18 @@ describe('Invoice controller Unit Tests', function () {
         });
         describe('$scope.setAppProvider()', function () {
             for (var i in testDataProvider) {
+                beforeEach(function () {
+                    $scope.setProviders(testDataProvider[i]['expected']);
+                });
                 for (var p in testDataProvider[i]['expected']) {
                     it('should set the $scope.app[\'provider\'] variable', function () {
-                        $scope.providers = testDataProvider[i]['expected'];
                         var provider = $scope.providers[p];
-                        var providerOrig = $scope.app.provider;
                         $scope.setAppProvider(provider);
                         expect($scope.app['provider']).toEqual(provider);
+                    });
+                    it('should set the $scope.app[\'providerOrig\'] variable', function () {
+                        var providerOrig = $scope.app['providerOrig'];
+                        $scope.setAppProvider($scope.providers[p]);
                         expect($scope.app['providerOrig']).toEqual(providerOrig);
                     });
                 }
@@ -133,15 +147,16 @@ describe('Invoice controller Unit Tests', function () {
         });
         describe('$scope.navigateEditMenu', function () {
             var expected = 'new-provider';
-            it('should set the $scope.app[\'application\'] variable', function () {
+            it('should set the $scope.app variable properly', function () {
                 $scope.navigateEditMenu();
                 expect($scope.app['application']).toEqual(expected);
                 expect($scope.app['provider']).toEqual(null);
+                expect($scope.app['providerOrig']).toEqual(null);
             });
             for (var i in testDataProvider) {
                 for (var p in testDataProvider[i]['expected']) {
                     it('should set the $scope.app[\'provider\'] variable', function () {
-                        $scope.providers = testDataProvider[i]['expected'];
+                        $scope.setProviders(testDataProvider[i]['expected']);
                         var provider = $scope.providers[p];
                         var providerOrig = $scope.app.provider;
                         $scope.navigateEditMenu(provider);
@@ -171,32 +186,24 @@ describe('Invoice controller Unit Tests', function () {
         describe('$scope.providerUpdateSuccessHandler', function () {
             var newProvider = {'id': 't_id', 'label': 't_label', 'name':'t_name', 'details': {'address': 't_address', 'postal-address': 't_postal-address', 'fax': 't_fax', 'web': 't_web', 'cs-email': 't_cs-email', 'phone': 't_phone'}};
             var editedProvider = {'id': 't_id', 'label': 't_edit_label', 'name':'t_edit_name', 'details': {'address': 't_edit_address', 'postal-address': 't_edit_postal-address', 'fax': 't_edit_fax', 'web': 't_edit_web', 'cs-email': 't_edit_cs-email', 'phone': 't_edit_phone'}};
-            it('checking the length', function () {
+            beforeEach(function () {
                 $scope.setProviders([]);
                 $scope.providerUpdateSuccessHandler(newProvider);
+            });
+            it('checking the length', function () {
                 expect($scope.providers.length).toEqual(1);
             });
             it('elements should be equal', function () {
-                $scope.setProviders([]);
-                $scope.providerUpdateSuccessHandler(newProvider);
                 expect($scope.providers[0]).toEqual(newProvider);
             });
             it('app.application should be provider-list', function () {
-                $scope.setProviders([]);
-                $scope.providerUpdateSuccessHandler(newProvider);
                 expect($scope.app['application']).toEqual('provider-list');
             });
             it('handles duplication', function () {
-                $scope.setProviders([]);
-                $scope.providerUpdateSuccessHandler(newProvider);
-                expect($scope.providers.length).toEqual(1);
                 $scope.providerUpdateSuccessHandler(newProvider);
                 expect($scope.providers.length).toEqual(1);
             });
             it('updates old value during edit', function () {
-                $scope.setProviders([]);
-                $scope.providerUpdateSuccessHandler(newProvider);
-                expect($scope.providers.length).toEqual(1);
                 $scope.providerUpdateSuccessHandler(editedProvider);
                 expect($scope.providers.length).toEqual(1);
                 expect($scope.providers[0]).toEqual(editedProvider);
